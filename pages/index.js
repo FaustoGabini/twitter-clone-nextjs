@@ -1,9 +1,27 @@
+import useState from "react";
 import Head from "next/head"; /* Utilidad para cambiar todo lo de adentro del head */
 import AppLayout from "../components/AppLayout";
 import { colors } from "../styles/theme";
 import Button from "../components/Button";
 import GitHub from "../components/Icon/GitHub";
+
+import { loginWithGithub } from "../firebase/client";
+
 export default function Home() {
+  const [user, setUser] = useState(null);
+
+  const handleClick = () => {
+    loginWithGithub()
+      .then((user) => {
+        const { avatar, username, url } = user;
+        setUser(user);
+        console.log(user);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   return (
     <>
       <Head>
@@ -20,7 +38,7 @@ export default function Home() {
             with developers
           </h2>
           <div>
-            <Button>
+            <Button onClick={handleClick}>
               <GitHub fill="#fff" width={24} height={24} />
               Login with GitHub
             </Button>
@@ -48,6 +66,7 @@ export default function Home() {
           color: ${colors.primary};
           font-size: 21px;
           margin: 0;
+          text-align: center;
         }
 
         div {
