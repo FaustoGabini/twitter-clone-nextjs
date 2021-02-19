@@ -11,23 +11,34 @@ const firebaseConfig = {
   measurementId: "G-WEGW1XRK2P",
 };
 
-firebase.initializeApp(firebaseConfig);
+/* Si no tenemos ninguna app de firebase inicializada entonces que inicialice la que queremos */
+firebase.apps.length === 0 &&
+  firebase.initializeApp(firebaseConfig);
+
+const mapUserFromFirebaseAuthToUser = (user) => {
+  const { photoURL, email, displayName } = user;
+
+  return {
+    avatar: photoURL,
+    username: displayName,
+    email: email,
+  };
+};
+
+/* Metodo para cuando recargamos la pagina no se pierda el usuario */
+export const onAuthStateChanged = (onChange) => {
+  return firebase.auth().onAuthStateChanged((user) => {
+    // If user is signed in
+    const normalizedUser = user
+      ? mapUserFromFirebaseAuthToUser(user)
+      : null;
+    onChange(normalizedUser);
+  });
+  // If user is not signed return null
+};
 
 export const loginWithGithub = () => {
   const githubProvider = new firebase.auth.GithubAuthProvider();
   /* nos devuelve una promesa que indica si tenemos o no un usuario */
-  return firebase
-    .auth()
-    .signInWithPopup(githubProvider)
-    .then((user) => {
-      const { additionalUserInfo } = user;
-      const { username, profile } = additionalUserInfo;
-      const { avatar_url, blog } = profile;
-
-      return {
-        avatar: avatar_url,
-        username: username,
-        url: blog,
-      };
-    });
+  return firebase.auth().signInWithPopup(githubProvider);
 };

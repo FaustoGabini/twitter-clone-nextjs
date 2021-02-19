@@ -1,21 +1,26 @@
-import useState from "react";
+import { useEffect, useState } from "react";
 import Head from "next/head"; /* Utilidad para cambiar todo lo de adentro del head */
 import AppLayout from "../components/AppLayout";
 import { colors } from "../styles/theme";
 import Button from "../components/Button";
 import GitHub from "../components/Icon/GitHub";
-
-import { loginWithGithub } from "../firebase/client";
+import Avatar from "../components/Avatar";
+import Logo from "../components/Icon/Logo";
+import {
+  loginWithGithub,
+  onAuthStateChanged,
+} from "../firebase/client";
 
 export default function Home() {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(undefined);
 
+  useEffect(() => {
+    onAuthStateChanged(setUser);
+  }, []);
   const handleClick = () => {
     loginWithGithub()
       .then((user) => {
-        const { avatar, username, url } = user;
         setUser(user);
-        console.log(user);
       })
       .catch((error) => {
         console.log(error);
@@ -31,17 +36,32 @@ export default function Home() {
 
       <AppLayout>
         <section>
-          <img src="/devter-logo.png" alt="Logo" />
+          <Logo width="100" />
           <h1>Devter</h1>
           <h2>
             Talk about development <br />
             with developers
           </h2>
           <div>
-            <Button onClick={handleClick}>
-              <GitHub fill="#fff" width={24} height={24} />
-              Login with GitHub
-            </Button>
+            {user === null && (
+              <Button onClick={handleClick}>
+                <GitHub
+                  fill="#fff"
+                  width={24}
+                  height={24}
+                />
+                Iniciar Sesion
+              </Button>
+            )}
+            {user && user.avatar && (
+              <div>
+                <Avatar
+                  alt={user.username}
+                  src={user.avatar}
+                  text={user.username}
+                />
+              </div>
+            )}
           </div>
         </section>
       </AppLayout>
@@ -58,12 +78,13 @@ export default function Home() {
         }
 
         h1 {
-          color: ${colors.secondary};
+          color: ${colors.primary};
           font-weight: 800;
+          font-size: 32px;
           margin-bottom: 16px;
         }
         h2 {
-          color: ${colors.primary};
+          color: ${colors.secondary};
           font-size: 21px;
           margin: 0;
           text-align: center;
