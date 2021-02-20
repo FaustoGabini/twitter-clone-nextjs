@@ -10,13 +10,20 @@ import {
   loginWithGithub,
   onAuthStateChanged,
 } from "../firebase/client";
+import { useRouter } from "next/router";
 
 export default function Home() {
   const [user, setUser] = useState(undefined);
-
+  const router = useRouter();
   useEffect(() => {
     onAuthStateChanged(setUser);
   }, []);
+
+  useEffect(() => {
+    /* Si tenemos un user que lo redirija a /home */
+    /* El Router en Next ya viene incorporado */
+    user && router.replace("/home");
+  }, [user]);
   const handleClick = () => {
     loginWithGithub()
       .then((user) => {
@@ -53,14 +60,8 @@ export default function Home() {
                 Iniciar Sesion
               </Button>
             )}
-            {user && user.avatar && (
-              <div>
-                <Avatar
-                  alt={user.username}
-                  src={user.avatar}
-                  text={user.username}
-                />
-              </div>
+            {user === undefined && (
+              <img src="/spinner.gif" />
             )}
           </div>
         </section>

@@ -35,8 +35,10 @@ export default function HomePage() {
       </AppLayout>
       <style jsx>{`
         header {
-          border-bottom: 1px solid #ccc;
+          border-bottom: 1px solid #eee;
           position: sticky;
+          background: #ffffffaa;
+          backdrop-filter: blur(5px);
           height: 49px;
           top: 0;
           width: 100%;
@@ -47,14 +49,13 @@ export default function HomePage() {
         h2 {
           font-size: 21px;
           font-wight: 800;
-        }
-        section {
-          padding-top: 49px;
+          padding-left: 15px;
         }
 
         nav {
           bottom: 0;
-          border-top: 1px solid #ccc;
+          background: #fff;
+          border-top: 1px solid #eee;
           height: 49px;
           position: sticky;
           width: 100%;

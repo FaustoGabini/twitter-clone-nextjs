@@ -24,6 +24,7 @@ export const globalStyles = css.global`
     background-size: 50px 50px;
     padding: 0;
     margin: 0;
+    overflow: hidden;
     font-family: ${fonts.base};
   }
 
@@ -47,6 +48,8 @@ export default css`
 
   main {
     background: #fff;
+    /* Si el contenido sobresale le pone un scroll en y */
+    overflow-y: auto;
     border-radius: 10px;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     height: 100%;
