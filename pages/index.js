@@ -4,20 +4,14 @@ import AppLayout from "../components/AppLayout";
 import { colors } from "../styles/theme";
 import Button from "../components/Button";
 import GitHub from "../components/Icon/GitHub";
-import Avatar from "../components/Avatar";
 import Logo from "../components/Icon/Logo";
-import {
-  loginWithGithub,
-  onAuthStateChanged,
-} from "../firebase/client";
+import { loginWithGithub } from "../firebase/client";
 import { useRouter } from "next/router";
+import useUser, { USER_STATES } from "../hooks/useUser";
 
 export default function Home() {
-  const [user, setUser] = useState(undefined);
+  const user = useUser();
   const router = useRouter();
-  useEffect(() => {
-    onAuthStateChanged(setUser);
-  }, []);
 
   useEffect(() => {
     /* Si tenemos un user que lo redirija a /home */
@@ -50,7 +44,7 @@ export default function Home() {
             with developers
           </h2>
           <div>
-            {user === null && (
+            {user === USER_STATES.NOT_LOGGED && (
               <Button onClick={handleClick}>
                 <GitHub
                   fill="#fff"
@@ -60,7 +54,7 @@ export default function Home() {
                 Iniciar Sesion
               </Button>
             )}
-            {user === undefined && (
+            {user === USER_STATES.NOT_KNOWN && (
               <img src="/spinner.gif" />
             )}
           </div>
