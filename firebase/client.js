@@ -15,13 +15,16 @@ const firebaseConfig = {
 firebase.apps.length === 0 &&
   firebase.initializeApp(firebaseConfig);
 
+const db = firebase.firestore();
+
 const mapUserFromFirebaseAuthToUser = (user) => {
-  const { photoURL, email, displayName } = user;
+  const { photoURL, email, displayName, uid } = user;
 
   return {
     avatar: photoURL,
     username: displayName,
     email: email,
+    uid,
   };
 };
 
@@ -41,4 +44,49 @@ export const loginWithGithub = () => {
   const githubProvider = new firebase.auth.GithubAuthProvider();
   /* nos devuelve una promesa que indica si tenemos o no un usuario */
   return firebase.auth().signInWithPopup(githubProvider);
+};
+
+export const addDevit = ({
+  avatar,
+  content,
+  userId,
+  userName,
+}) => {
+  // collection devulve una promesa
+  return db.collection("devits").add({
+    avatar,
+    content,
+    userId,
+    userName,
+    createdAt: firebase.firestore.Timestamp.fromDate(
+      new Date()
+    ),
+    likesCount: 0,
+    sharedCount: 0,
+  });
+};
+
+export const fetchLatestDevits = () => {
+  return db
+    .collection("devits")
+    .get()
+    .then(({ docs }) => {
+      return docs.map((doc) => {
+        /* Transformamos el documento a un objeto plano */
+        const data = doc.data();
+        const id = doc.id;
+        const { createdAt } = data;
+
+        const date = new Date(createdAt.seconds * 1000);
+        const normalizedCreatedAt = new Intl.DateTimeFormat(
+          "es-ES"
+        ).format(date);
+
+        return {
+          ...data,
+          id,
+          createdAt: normalizedCreatedAt,
+        };
+      });
+    });
 };

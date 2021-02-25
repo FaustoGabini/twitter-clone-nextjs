@@ -1,14 +1,65 @@
+import { useState } from "react";
 import AppLayout from "../../../components/AppLayout";
 import Button from "../../../components/Button";
 import useUser from "../../../hooks/useUser";
+import { addDevit } from "../../../firebase/client";
+import { useRouter } from "next/router";
+
+const COMPOSE_STATES = {
+  USER_NOT_KNOWN: 0,
+  LOADING: 1,
+  SUCCESS: 2,
+  ERROR: -1,
+};
+
 export default function ComposeTweet() {
+  const [message, setMessage] = useState("");
+  const [status, setStatus] = useState(
+    COMPOSE_STATES.USER_NOT_KNOWN
+  );
+  const user = useUser();
+  const router = useRouter();
+
+  const handleChange = (event) => {
+    const { value } = event.target;
+    setMessage(value);
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    setStatus(COMPOSE_STATES.LOADING);
+    addDevit({
+      avatar: user.avatar,
+      content: message,
+      userId: user.uid,
+      userName: user.username,
+    })
+      .then(() => {
+        router.push("/");
+      })
+      .catch((err) => {
+        console.log(err);
+        setStatus(COMPOSE_STATES.ERROR);
+      });
+  };
+
+  const isButtonDisabled =
+    message.length === 0 ||
+    status === COMPOSE_STATES.LOADING;
+
   return (
     <>
       <AppLayout>
-        <form>
-          <textarea placeholder="¿Qué está pasando?"></textarea>
+        <form onSubmit={handleSubmit}>
+          <textarea
+            onChange={handleChange}
+            placeholder="¿Qué está pasando?"
+            value={message}
+          ></textarea>
           <div>
-            <Button>Devitear</Button>
+            <Button disabled={isButtonDisabled}>
+              Devitear
+            </Button>
           </div>
         </form>
       </AppLayout>

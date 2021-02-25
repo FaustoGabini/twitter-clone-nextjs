@@ -2,16 +2,16 @@ import AppLayout from "../../components/AppLayout";
 import { useState, useEffect } from "react";
 import Devit from "../../components/Devit";
 import useUser from "../../hooks/useUser";
+import { fetchLatestDevits } from "../../firebase/client";
+
 export default function HomePage() {
   const [timeline, setTimeline] = useState([]);
   const user = useUser(); /* Revisa si el usuario esta identificado y si no lo esta te redirije a / */
   useEffect(() => {
     user &&
-      fetch(
-        "http://localhost:3000/api/statuses/home_timeline"
-      )
-        .then((res) => res.json())
-        .then(setTimeline);
+      fetchLatestDevits().then((timeline) => {
+        setTimeline(timeline);
+      });
   }, [user]);
 
   return (
@@ -24,11 +24,13 @@ export default function HomePage() {
           {timeline.map((devit) => {
             return (
               <Devit
-                key={devit.key}
-                username={devit.username}
-                message={devit.message}
+                key={devit.id}
+                createdAt={devit.createdAt}
+                userName={devit.userName}
+                content={devit.content}
                 id={devit.id}
                 avatar={devit.avatar}
+                userId={devit.userId}
               />
             );
           })}
@@ -55,7 +57,7 @@ export default function HomePage() {
         }
 
         nav {
-          bottom: 0;
+          bottom: 0px;
           background: #fff;
           border-top: 1px solid #eee;
           height: 49px;
