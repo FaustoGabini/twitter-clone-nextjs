@@ -69,6 +69,7 @@ export const addDevit = ({
 export const fetchLatestDevits = () => {
   return db
     .collection("devits")
+    .orderBy("createdAt", "desc")
     .get()
     .then(({ docs }) => {
       return docs.map((doc) => {
@@ -77,15 +78,10 @@ export const fetchLatestDevits = () => {
         const id = doc.id;
         const { createdAt } = data;
 
-        const date = new Date(createdAt.seconds * 1000);
-        const normalizedCreatedAt = new Intl.DateTimeFormat(
-          "es-ES"
-        ).format(date);
-
         return {
           ...data,
           id,
-          createdAt: normalizedCreatedAt,
+          createdAt: +createdAt.toDate(),
         };
       });
     });
