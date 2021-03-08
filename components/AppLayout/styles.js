@@ -55,6 +55,8 @@ export default css`
     background: #fff;
     /* Si el contenido sobresale le pone un scroll en y */
     overflow-y: auto;
+    display: flex;
+    flex-direction: column;
     border-radius: 10px;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     height: 100%;

@@ -86,3 +86,12 @@ export const fetchLatestDevits = () => {
       });
     });
 };
+
+export const upLoadImage = (file) => {
+  const ref = firebase
+    .storage()
+    .ref(`/images/${file.name}`);
+  const task = ref.put(file);
+
+  return task;
+};
