@@ -5,6 +5,7 @@ export default function Devit({
   userName,
   content,
   id,
+  img,
   createdAt,
 }) {
   const timeago = useTimeAgo(createdAt);
@@ -23,6 +24,7 @@ export default function Devit({
           </header>
 
           <p>{content}</p>
+          {img && <img src={img} />}
         </section>
       </article>
 
@@ -36,6 +38,13 @@ export default function Devit({
 
           div {
             padding-right: 10px;
+          }
+
+          img {
+            border-radius: 10px;
+            width: 100%;
+            margin-top: 10px;
+            height: auto;
           }
 
           p {

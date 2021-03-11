@@ -51,11 +51,13 @@ export const addDevit = ({
   content,
   userId,
   userName,
+  img,
 }) => {
   // collection devulve una promesa
   return db.collection("devits").add({
     avatar,
     content,
+    img,
     userId,
     userName,
     createdAt: firebase.firestore.Timestamp.fromDate(

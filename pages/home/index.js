@@ -39,6 +39,7 @@ export default function HomePage() {
                 id={devit.id}
                 avatar={devit.avatar}
                 userId={devit.userId}
+                img={devit.img}
               />
             );
           })}
